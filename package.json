@@ -54,7 +54,8 @@
     "tailwindcss-animate": "^1.0.7",
     "use-stick-to-bottom": "^1.0.46",
     "uuid": "^11.1.0",
-    "zod": "^4.1.12"
+    "zod": "^4.1.12",
+    "@runloop/api-client": "^0.68.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

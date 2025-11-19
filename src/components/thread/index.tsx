@@ -22,6 +22,7 @@ import {
   SquarePen,
   XIcon,
   Plus,
+  Rocket,
 } from "lucide-react";
 import { useQueryState, parseAsBoolean } from "nuqs";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
@@ -45,6 +46,7 @@ import {
   ArtifactTitle,
   useArtifactContext,
 } from "./artifact";
+import { launchDevboxAndOpen } from "@/lib/runloop-launch";
 
 function StickyToBottomContent(props: {
   content: ReactNode;
@@ -136,6 +138,7 @@ export function Thread() {
     handlePaste,
   } = useFileUpload();
   const [firstTokenReceived, setFirstTokenReceived] = useState(false);
+  const [isLaunchingDevbox, setIsLaunchingDevbox] = useState(false);
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
   const stream = useStreamContext();
@@ -248,6 +251,45 @@ export function Thread() {
       streamSubgraphs: true,
       streamResumable: true,
     });
+  };
+
+  const handleLaunchDevbox = async () => {
+    const agentId =
+      process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_AGENT_ID ||
+      process.env.RUNLOOP_DEFAULT_AGENT_ID;
+    if (!agentId) {
+      toast.error("Agent ID not configured", {
+        description:
+          "Please set RUNLOOP_DEFAULT_AGENT_ID or NEXT_PUBLIC_RUNLOOP_DEFAULT_AGENT_ID environment variable",
+        richColors: true,
+        closeButton: true,
+      });
+      return;
+    }
+
+    setIsLaunchingDevbox(true);
+    try {
+      await launchDevboxAndOpen({
+        agentId,
+        command: process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_COMMAND,
+        port: Number(process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_PORT) || 2024,
+        assistantId: "agent",
+      });
+      toast.success("Devbox launched successfully", {
+        description: "Opening agent chat in new tab...",
+        richColors: true,
+      });
+    } catch (error) {
+      console.error("Error launching devbox:", error);
+      toast.error("Failed to launch devbox", {
+        description:
+          error instanceof Error ? error.message : "An unexpected error occurred",
+        richColors: true,
+        closeButton: true,
+      });
+    } finally {
+      setIsLaunchingDevbox(false);
+    }
   };
 
   const chatStarted = !!threadId || !!messages.length;
@@ -374,6 +416,20 @@ export function Thread() {
                 <div className="flex items-center">
                   <OpenGitHubRepo />
                 </div>
+                <TooltipIconButton
+                  size="lg"
+                  className="p-4"
+                  tooltip="Launch Devbox Agent"
+                  variant="ghost"
+                  onClick={handleLaunchDevbox}
+                  disabled={isLaunchingDevbox}
+                >
+                  {isLaunchingDevbox ? (
+                    <LoaderCircle className="size-5 animate-spin" />
+                  ) : (
+                    <Rocket className="size-5" />
+                  )}
+                </TooltipIconButton>
                 <TooltipIconButton
                   size="lg"
                   className="p-4"
