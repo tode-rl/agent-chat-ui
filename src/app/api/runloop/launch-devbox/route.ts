@@ -14,19 +14,23 @@ export async function POST(request: NextRequest) {
   try {
     const body: LaunchDevboxRequest = await request.json();
 
-    // Validate required fields
-    if (!body.agentId) {
+    // Get agent ID from request body, or fall back to server-side environment variable
+    const agentId =
+      body.agentId ||
+      process.env.RUNLOOP_DEFAULT_AGENT_ID ||
+      process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_AGENT_ID;
+
+    // Validate that we have an agent ID
+    if (!agentId) {
       return NextResponse.json<RunloopError>(
         {
-          message: "agentId is required",
+          message:
+            "agentId is required. Please provide it in the request body or set RUNLOOP_DEFAULT_AGENT_ID environment variable",
           code: "MISSING_AGENT_ID",
         },
         { status: 400 },
       );
     }
-
-    // Get configuration with defaults
-    const agentId = body.agentId;
     const command =
       body.command ||
       process.env.RUNLOOP_DEFAULT_COMMAND ||
@@ -38,13 +42,18 @@ export async function POST(request: NextRequest) {
     const client = createRunloopClient();
 
     // Step 1: Create devbox with agent mount
-    const devbox = await client.devboxes.create({
+    const devbox = await client.devboxes.createAndAwaitRunning({
       mounts: [
         {
           type: "agent_mount",
           agent_id: agentId,
+          agent_name: null,
+          agent_path: '/home/user/agent'
         },
       ],
+      secrets: {
+        "ANTHROPIC_API_KEY": "ANTHROPIC_API_KEY",
+      }
     });
 
     const devboxId = devbox.id;

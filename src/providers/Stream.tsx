@@ -19,11 +19,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LangGraphLogoSVG } from "@/components/icons/langgraph";
 import { Label } from "@/components/ui/label";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Rocket, LoaderCircle } from "lucide-react";
 import { PasswordInput } from "@/components/ui/password-input";
 import { getApiKey } from "@/lib/api-key";
 import { useThreads } from "./Thread";
 import { toast } from "sonner";
+import { launchDevboxWithResponse } from "@/lib/runloop-launch";
 
 export type StateType = { messages: Message[]; ui?: UIMessage[] };
 
@@ -157,9 +158,54 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
     _setApiKey(key);
   };
 
+  // Loading state for devbox launch
+  const [isLaunchingDevbox, setIsLaunchingDevbox] = useState(false);
+
   // Determine final values to use, prioritizing URL params then env vars
   const finalApiUrl = apiUrl || envApiUrl;
   const finalAssistantId = assistantId || envAssistantId;
+
+  // Handler for launching devbox
+  const handleLaunchDevbox = async () => {
+    setIsLaunchingDevbox(true);
+    try {
+      // Get assistant ID from form input if available, otherwise use default
+      const form = document.querySelector("form") as HTMLFormElement | null;
+      const formData = form ? new FormData(form) : null;
+      const formAssistantId = formData?.get("assistantId") as string | undefined;
+      const targetAssistantId = formAssistantId || DEFAULT_ASSISTANT_ID;
+
+      // Get agent ID from client-side env var if available, otherwise let server use RUNLOOP_DEFAULT_AGENT_ID
+      const clientAgentId =
+        process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_AGENT_ID || undefined;
+
+      const response = await launchDevboxWithResponse({
+        ...(clientAgentId && { agentId: clientAgentId }),
+        command: process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_COMMAND,
+        port: Number(process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_PORT) || 2024,
+        assistantId: targetAssistantId,
+      });
+
+      // Extract tunnel URL and use the assistant ID we passed to the API
+      setApiUrl(response.tunnelUrl);
+      setAssistantId(targetAssistantId);
+
+      toast.success("Devbox launched successfully", {
+        description: "Connecting to agent chat...",
+        richColors: true,
+      });
+    } catch (error) {
+      console.error("Error launching devbox:", error);
+      toast.error("Failed to launch devbox", {
+        description:
+          error instanceof Error ? error.message : "An unexpected error occurred",
+        richColors: true,
+        closeButton: true,
+      });
+    } finally {
+      setIsLaunchingDevbox(false);
+    }
+  };
 
   // Show the form if we: don't have an API URL, or don't have an assistant ID
   if (!finalApiUrl || !finalAssistantId) {
@@ -248,7 +294,20 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
               />
             </div>
 
-            <div className="mt-2 flex justify-end">
+            <div className="mt-2 flex justify-end gap-2">
+              <Button
+                type="button"
+                onClick={handleLaunchDevbox}
+                disabled={isLaunchingDevbox}
+                size="lg"
+              >
+                {isLaunchingDevbox ? (
+                  <LoaderCircle className="size-5 animate-spin" />
+                ) : (
+                  <Rocket className="size-5" />
+                )}
+                Launch Devbox Agent
+              </Button>
               <Button
                 type="submit"
                 size="lg"

@@ -38,6 +38,39 @@ export async function launchDevbox(
 }
 
 /**
+ * Launches a Runloop devbox and returns the full response object
+ * @param config Configuration for devbox launch
+ * @returns Promise resolving to the full LaunchDevboxResponse
+ * @throws Error if launch fails
+ */
+export async function launchDevboxWithResponse(
+  config: LaunchDevboxRequest,
+): Promise<LaunchDevboxResponse> {
+  try {
+    const response = await fetch("/api/runloop/launch-devbox", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(config),
+    });
+
+    if (!response.ok) {
+      const error: RunloopError = await response.json();
+      throw new Error(error.message || "Failed to launch devbox");
+    }
+
+    const data: LaunchDevboxResponse = await response.json();
+    return data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("An unexpected error occurred while launching devbox");
+  }
+}
+
+/**
  * Launches a devbox and opens the chat URL in a new tab/window
  * @param config Configuration for devbox launch
  * @param openInNewTab Whether to open in new tab (default: true)

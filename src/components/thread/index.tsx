@@ -254,23 +254,14 @@ export function Thread() {
   };
 
   const handleLaunchDevbox = async () => {
-    const agentId =
-      process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_AGENT_ID ||
-      process.env.RUNLOOP_DEFAULT_AGENT_ID;
-    if (!agentId) {
-      toast.error("Agent ID not configured", {
-        description:
-          "Please set RUNLOOP_DEFAULT_AGENT_ID or NEXT_PUBLIC_RUNLOOP_DEFAULT_AGENT_ID environment variable",
-        richColors: true,
-        closeButton: true,
-      });
-      return;
-    }
-
     setIsLaunchingDevbox(true);
     try {
+      // Get agent ID from client-side env var if available, otherwise let server use RUNLOOP_DEFAULT_AGENT_ID
+      const clientAgentId =
+        process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_AGENT_ID || undefined;
+
       await launchDevboxAndOpen({
-        agentId,
+        ...(clientAgentId && { agentId: clientAgentId }),
         command: process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_COMMAND,
         port: Number(process.env.NEXT_PUBLIC_RUNLOOP_DEFAULT_PORT) || 2024,
         assistantId: "agent",

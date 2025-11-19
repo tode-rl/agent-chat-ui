@@ -3,7 +3,7 @@
  */
 
 export interface LaunchDevboxRequest {
-  agentId: string;
+  agentId?: string;
   command?: string;
   port?: number;
   assistantId?: string;

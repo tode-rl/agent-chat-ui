@@ -13,6 +13,10 @@ export function createRunloopClient() {
     );
   }
 
-  return new Runloop();
+  return new Runloop(
+    {
+      baseURL: "https://api.runloop.pro",
+    }
+  );
 }
 
