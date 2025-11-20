@@ -38,6 +38,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.1.8
         version: 1.2.6(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@runloop/api-client':
+        specifier: ^0.68.0
+        version: 0.68.0
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -997,6 +1000,9 @@ packages:
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
+
+  '@runloop/api-client@0.68.0':
+    resolution: {integrity: sha512-uf0kqMn3Z8NfJHsTNCG1ZkpnLh2ZyT5nKGwsznZhFbAU+auw1P56SRYjdYYmgHjqPSmzTdvFou7r77ypdz683w==}
 
   '@rushstack/eslint-patch@1.11.0':
     resolution: {integrity: sha512-zxnHvoMQVqewTJr/W4pKjF0bMGiKJv1WX7bSrkl46Hg0QjESbzBROWK0Wg4RphzSOS5Jiy7eFimmM3UgMrMZbQ==}
@@ -2716,6 +2722,7 @@ packages:
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
+    deprecated: Use your platform's native DOMException instead
 
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
@@ -3484,6 +3491,10 @@ packages:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
 
+  uuidv7@1.0.2:
+    resolution: {integrity: sha512-8JQkH4ooXnm1JCIhqTMbtmdnYEn6oKukBxHn1Ic9878jMkL7daTI7anTExfY18VRCX7tcdn5quzvCb6EWrR8PA==}
+    hasBin: true
+
   vfile-location@5.0.3:
     resolution: {integrity: sha512-5yXvWDEgqeiYiBe1lbxYF7UMAIm/IcopxMHrMQDq3nvKcjPKIhZklUKL+AE7J7uApI4kwe2snsK+eI6UTj9EHg==}
 
@@ -3562,6 +3573,9 @@ packages:
     resolution: {integrity: sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g==}
     peerDependencies:
       zod: ^3.24.1
+
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
   zod@4.1.12:
     resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
@@ -4225,6 +4239,20 @@ snapshots:
 
   '@rtsao/scc@1.1.0': {}
 
+  '@runloop/api-client@0.68.0':
+    dependencies:
+      '@types/node': 18.19.100
+      '@types/node-fetch': 2.6.12
+      abort-controller: 3.0.0
+      agentkeepalive: 4.6.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0
+      uuidv7: 1.0.2
+      zod: 3.25.76
+    transitivePeerDependencies:
+      - encoding
+
   '@rushstack/eslint-patch@1.11.0': {}
 
   '@swc/counter@0.1.3': {}
@@ -4370,12 +4398,10 @@ snapshots:
     dependencies:
       '@types/node': 22.15.18
       form-data: 4.0.2
-    optional: true
 
   '@types/node@18.19.100':
     dependencies:
       undici-types: 5.26.5
-    optional: true
 
   '@types/node@22.15.18':
     dependencies:
@@ -4538,7 +4564,6 @@ snapshots:
   abort-controller@3.0.0:
     dependencies:
       event-target-shim: 5.0.1
-    optional: true
 
   acorn-jsx@5.3.2(acorn@8.14.1):
     dependencies:
@@ -4549,7 +4574,6 @@ snapshots:
   agentkeepalive@4.6.0:
     dependencies:
       humanize-ms: 1.2.1
-    optional: true
 
   ajv@6.12.6:
     dependencies:
@@ -4641,8 +4665,7 @@ snapshots:
 
   async-function@1.0.0: {}
 
-  asynckit@0.4.0:
-    optional: true
+  asynckit@0.4.0: {}
 
   autoprefixer@10.4.21(postcss@8.5.3):
     dependencies:
@@ -4767,7 +4790,6 @@ snapshots:
   combined-stream@1.0.8:
     dependencies:
       delayed-stream: 1.0.0
-    optional: true
 
   comma-separated-tokens@1.0.8: {}
 
@@ -4881,8 +4903,7 @@ snapshots:
       has-property-descriptors: 1.0.2
       object-keys: 1.1.1
 
-  delayed-stream@1.0.0:
-    optional: true
+  delayed-stream@1.0.0: {}
 
   dequal@2.0.3: {}
 
@@ -5264,8 +5285,7 @@ snapshots:
 
   esutils@2.0.3: {}
 
-  event-target-shim@5.0.1:
-    optional: true
+  event-target-shim@5.0.1: {}
 
   eventemitter3@4.0.7: {}
 
@@ -5331,8 +5351,7 @@ snapshots:
     dependencies:
       is-callable: 1.2.7
 
-  form-data-encoder@1.7.2:
-    optional: true
+  form-data-encoder@1.7.2: {}
 
   form-data@4.0.2:
     dependencies:
@@ -5340,7 +5359,6 @@ snapshots:
       combined-stream: 1.0.8
       es-set-tostringtag: 2.1.0
       mime-types: 2.1.35
-    optional: true
 
   format@0.2.2: {}
 
@@ -5348,7 +5366,6 @@ snapshots:
     dependencies:
       node-domexception: 1.0.0
       web-streams-polyfill: 4.0.0-beta.3
-    optional: true
 
   fraction.js@4.3.7: {}
 
@@ -5555,7 +5572,6 @@ snapshots:
   humanize-ms@1.2.1:
     dependencies:
       ms: 2.1.3
-    optional: true
 
   icss-utils@5.1.0(postcss@8.5.3):
     dependencies:
@@ -6248,13 +6264,11 @@ snapshots:
       braces: 3.0.3
       picomatch: 2.3.1
 
-  mime-db@1.52.0:
-    optional: true
+  mime-db@1.52.0: {}
 
   mime-types@2.1.35:
     dependencies:
       mime-db: 1.52.0
-    optional: true
 
   minimatch@3.1.2:
     dependencies:
@@ -6323,13 +6337,11 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  node-domexception@1.0.0:
-    optional: true
+  node-domexception@1.0.0: {}
 
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
-    optional: true
 
   node-releases@2.0.19: {}
 
@@ -7027,8 +7039,7 @@ snapshots:
     dependencies:
       is-number: 7.0.0
 
-  tr46@0.0.3:
-    optional: true
+  tr46@0.0.3: {}
 
   trim-lines@3.0.1: {}
 
@@ -7103,8 +7114,7 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
-  undici-types@5.26.5:
-    optional: true
+  undici-types@5.26.5: {}
 
   undici-types@6.21.0: {}
 
@@ -7214,6 +7224,8 @@ snapshots:
 
   uuid@9.0.1: {}
 
+  uuidv7@1.0.2: {}
+
   vfile-location@5.0.3:
     dependencies:
       '@types/unist': 3.0.3
@@ -7248,17 +7260,14 @@ snapshots:
 
   web-namespaces@2.0.1: {}
 
-  web-streams-polyfill@4.0.0-beta.3:
-    optional: true
+  web-streams-polyfill@4.0.0-beta.3: {}
 
-  webidl-conversions@3.0.1:
-    optional: true
+  webidl-conversions@3.0.1: {}
 
   whatwg-url@5.0.0:
     dependencies:
       tr46: 0.0.3
       webidl-conversions: 3.0.1
-    optional: true
 
   which-boxed-primitive@1.1.1:
     dependencies:
@@ -7320,6 +7329,8 @@ snapshots:
     dependencies:
       zod: 4.1.12
     optional: true
+
+  zod@3.25.76: {}
 
   zod@4.1.12: {}
 
